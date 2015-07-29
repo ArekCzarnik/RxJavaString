@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,12 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.*;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CoderResult;
+import java.nio.charset.CodingErrorAction;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
@@ -358,11 +363,33 @@ public class StringObservable {
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.split.png" alt="">
      *
      * @param src
-     * @param pattern
+     * @param regex
      * @return the Observable streaming the split values
      */
 
-    public static Observable<String> split(final Observable<String> src, final Pattern pattern) {
+    public static Observable<String> split(final Observable<String> src, String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        return StringObservable.split(src,pattern);
+    }
+
+    /**
+     * Rechunks the strings based on a regex pattern and works on infinite stream.
+     *
+     * <pre>
+     * split(["boo:an", "d:foo"], ":") --> ["boo", "and", "foo"]
+     * split(["boo:an", "d:foo"], "o") --> ["b", "", ":and:f", "", ""]
+     * </pre>
+     *
+     * See {@link Pattern}
+     * <p>
+     * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.split.png" alt="">
+     *
+     * @param src
+     * @param pattern
+     * @return the Observable streaming the split values
+     */
+    public static Observable<String> split(final Observable<String> src, Pattern pattern) {
+
         return src.lift(new Operator<String, String>() {
             @Override
             public Subscriber<? super String> call(final Subscriber<? super String> o) {
@@ -422,28 +449,6 @@ public class StringObservable {
     }
 
     /**
-     * Rechunks the strings based on a regex pattern and works on infinite stream.
-     *
-     * <pre>
-     * split(["boo:an", "d:foo"], ":") --> ["boo", "and", "foo"]
-     * split(["boo:an", "d:foo"], "o") --> ["b", "", ":and:f", "", ""]
-     * </pre>
-     *
-     * See {@link Pattern}
-     * <p>
-     * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.split.png" alt="">
-     *
-     * @param src
-     * @param regex
-     * @return the Observable streaming the split values
-     */
-
-    public static Observable<String> split(final Observable<String> src, String regex) {
-        final Pattern pattern = Pattern.compile(regex);
-        return StringObservable.split(src,pattern);
-    }
-
-    /**
      * Concatenates the sequence of values by adding a separator
      * between them and emitting the result once the source completes.
      * <p>
@@ -480,8 +485,7 @@ public class StringObservable {
                         if (n > 0) {
                             parent.requestAll();
                         }
-                    }
-                });
+                    }});
                 return parent;
             }
         });
