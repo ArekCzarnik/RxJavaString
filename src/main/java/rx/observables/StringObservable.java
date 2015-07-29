@@ -363,7 +363,9 @@ public class StringObservable {
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.split.png" alt="">
      *
      * @param src
+     *           the source that should be use for the split
      * @param regex
+     *           a string that build regular expression modifier
      * @return the Observable streaming the split values
      */
 
@@ -385,7 +387,9 @@ public class StringObservable {
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.split.png" alt="">
      *
      * @param src
+     *           the source that should be use for the split
      * @param pattern
+     *           pre compiled regular expression pattern for the split functionality
      * @return the Observable streaming the split values
      */
     public static Observable<String> split(final Observable<String> src, final Pattern pattern) {
