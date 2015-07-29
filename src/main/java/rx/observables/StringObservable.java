@@ -140,7 +140,7 @@ public class StringObservable {
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.from.png" alt="">
      *
-     * @param i
+     * @param reader
      *            Source {@link Reader}
      * @param size
      *            internal buffer size
@@ -388,7 +388,7 @@ public class StringObservable {
      * @param pattern
      * @return the Observable streaming the split values
      */
-    public static Observable<String> split(final Observable<String> src, Pattern pattern) {
+    public static Observable<String> split(final Observable<String> src, final Pattern pattern) {
 
         return src.lift(new Operator<String, String>() {
             @Override
@@ -557,7 +557,7 @@ public class StringObservable {
      * <p>
      * <img width="640" height="315" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/from.png" alt="">
      *
-     * @param str
+     * @param source
      *            the source String
      * @return an Observable that emits each char in the source String
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Creating-Observables#from">RxJava wiki: from</a>
