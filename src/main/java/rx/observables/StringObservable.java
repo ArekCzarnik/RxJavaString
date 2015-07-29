@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public class StringObservable {
      * {@code byte[]}s. Supports backpressure.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.from.png" alt="">
-     *
+     * 
      * @param i
      *            Source {@link InputStream}
      * @return the Observable containing read byte arrays from the input
@@ -69,11 +69,11 @@ public class StringObservable {
 
     /**
      * Helps in creating an Observable that automatically calls {@link Closeable#close()} on completion, error or unsubscribe.
-     *
+     * 
      * <pre>
      * StringObservable.using(() -> new FileReader(file), (reader) -> StringObservable.from(reader))
      * </pre>
-     *
+     * 
      * @param resourceFactory
      *            Generates a new {@link Closeable} resource for each new subscription to the returned Observable
      * @param observableFactory
@@ -82,7 +82,7 @@ public class StringObservable {
      *            An {@link Observable} that automatically closes the resource when done.
      */
     public static <R, S extends Closeable> Observable<R> using(final UnsafeFunc0<S> resourceFactory,
-                                                               final Func1<S, Observable<R>> observableFactory) {
+            final Func1<S, Observable<R>> observableFactory) {
         return Observable.using(new Func0<S>() {
             @Override
             public S call() {
@@ -109,7 +109,7 @@ public class StringObservable {
      * {@code byte[]}s. Supports backpressure.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.from.png" alt="">
-     *
+     * 
      * @param is
      *            Source {@link InputStream}
      * @param size
@@ -125,7 +125,7 @@ public class StringObservable {
      * {@link String}s. Supports backpressure.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.from.png" alt="">
-     *
+     * 
      * @param i
      *            Source {@link Reader}
      * @return the Observable of Strings read from the source
@@ -139,8 +139,8 @@ public class StringObservable {
      * {@link String}s. Supports backpressure.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.from.png" alt="">
-     *
-     * @param reader
+     * 
+     * @param i
      *            Source {@link Reader}
      * @param size
      *            internal buffer size
@@ -155,7 +155,7 @@ public class StringObservable {
      * and where handles when a multibyte character spans two chunks.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.decode.png" alt="">
-     *
+     * 
      * @param src
      * @param charsetName
      * @return the Observable returning a stream of decoded strings
@@ -169,7 +169,7 @@ public class StringObservable {
      * and where handles when a multibyte character spans two chunks.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.decode.png" alt="">
-     *
+     * 
      * @param src
      * @param charset
      * @return the Observable returning a stream of decoded strings
@@ -184,7 +184,7 @@ public class StringObservable {
      * This method allows for more control over how malformed and unmappable characters are handled.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.decode.png" alt="">
-     *
+     * 
      * @param src
      * @param charsetDecoder
      * @return the Observable returning a stream of decoded strings
@@ -225,13 +225,16 @@ public class StringObservable {
                                 bb.put(last);
                                 bb.put(next);
                                 bb.flip();
-                            } else { // next == null
+                            }
+                            else { // next == null
                                 bb = last;
                             }
-                        } else { // last == null
+                        }
+                        else { // last == null
                             if (next != null) {
                                 bb = ByteBuffer.wrap(next);
-                            } else { // next == null
+                            }
+                            else { // next == null
                                 return true;
                             }
                         }
@@ -243,7 +246,8 @@ public class StringObservable {
                         if (cr.isError()) {
                             try {
                                 cr.throwException();
-                            } catch (CharacterCodingException e) {
+                            }
+                            catch (CharacterCodingException e) {
                                 o.onError(e);
                                 return false;
                             }
@@ -251,7 +255,8 @@ public class StringObservable {
 
                         if (bb.remaining() > 0) {
                             leftOver = bb;
-                        } else {
+                        }
+                        else {
                             leftOver = null;
                         }
 
@@ -270,7 +275,7 @@ public class StringObservable {
      * Encodes a possibly infinite stream of strings into an Observable of byte arrays.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.encode.png" alt="">
-     *
+     * 
      * @param src
      * @param charsetName
      * @return the Observable with a stream of encoded byte arrays
@@ -283,7 +288,7 @@ public class StringObservable {
      * Encodes a possibly infinite stream of strings into an Observable of byte arrays.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.encode.png" alt="">
-     *
+     * 
      * @param src
      * @param charset
      * @return the Observable with a stream of encoded byte arrays
@@ -297,7 +302,7 @@ public class StringObservable {
      * This method allows for more control over how malformed and unmappable characters are handled.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.encode.png" alt="">
-     *
+     * 
      * @param src
      * @param charsetEncoder
      * @return the Observable with a stream of encoded byte arrays
@@ -323,7 +328,7 @@ public class StringObservable {
      * this on infinite streams.
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.stringConcat.png" alt="">
-     *
+     * 
      * @param src
      * @return the Observable returing all strings concatenated as a single string
      */
@@ -337,7 +342,7 @@ public class StringObservable {
     }
 
     /**
-     * Maps {@link Observable}&lt;{@link Object}&gt; to {@link Observable}&lt;{@link String}&gt; by using {@link String#valueOf(Object)}
+     * Maps {@link Observable}&lt;{@link Object}&gt; to {@link Observable}&lt;{@link String}&gt; by using {@link String#valueOf(Object)} 
      * @param src
      * @return An {@link Observable} of only {@link String}s.
      */
@@ -352,47 +357,22 @@ public class StringObservable {
 
     /**
      * Rechunks the strings based on a regex pattern and works on infinite stream.
-     *
+     * 
      * <pre>
      * split(["boo:an", "d:foo"], ":") --> ["boo", "and", "foo"]
      * split(["boo:an", "d:foo"], "o") --> ["b", "", ":and:f", "", ""]
      * </pre>
-     *
+     * 
      * See {@link Pattern}
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.split.png" alt="">
-     *
+     * 
      * @param src
-     *           the source that should be use for the split
      * @param regex
-     *           a string that build regular expression modifier
      * @return the Observable streaming the split values
      */
-
     public static Observable<String> split(final Observable<String> src, String regex) {
-        Pattern pattern = Pattern.compile(regex);
-        return StringObservable.split(src,pattern);
-    }
-
-    /**
-     * Rechunks the strings based on a regex pattern and works on infinite stream.
-     *
-     * <pre>
-     * split(["boo:an", "d:foo"], ":") --> ["boo", "and", "foo"]
-     * split(["boo:an", "d:foo"], "o") --> ["b", "", ":and:f", "", ""]
-     * </pre>
-     *
-     * See {@link Pattern}
-     * <p>
-     * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.split.png" alt="">
-     *
-     * @param src
-     *           the source that should be use for the split
-     * @param pattern
-     *           pre compiled regular expression pattern for the split functionality
-     * @return the Observable streaming the split values
-     */
-    public static Observable<String> split(final Observable<String> src, final Pattern pattern) {
+        final Pattern pattern = Pattern.compile(regex);
 
         return src.lift(new Operator<String, String>() {
             @Override
@@ -402,7 +382,7 @@ public class StringObservable {
 
                     @Override
                     public void onCompleted() {
-                        if (leftOver != null)
+                        if (leftOver!=null)
                             output(leftOver);
                         if (!o.isUnsubscribed())
                             o.onCompleted();
@@ -410,7 +390,7 @@ public class StringObservable {
 
                     @Override
                     public void onError(Throwable e) {
-                        if (leftOver != null)
+                        if (leftOver!=null)
                             output(leftOver);
                         if (!o.isUnsubscribed())
                             o.onError(e);
@@ -433,13 +413,14 @@ public class StringObservable {
 
                     /**
                      * when limit == 0 trailing empty parts are not emitted.
-                     *
+                     * 
                      * @param part
                      */
                     private void output(String part) {
                         if (part.isEmpty()) {
                             emptyPartCount++;
-                        } else {
+                        }
+                        else {
                             for (; emptyPartCount > 0; emptyPartCount--)
                                 if (!o.isUnsubscribed())
                                     o.onNext("");
@@ -462,14 +443,14 @@ public class StringObservable {
      * {@link java.lang.String#valueOf(java.lang.Object)} calls.
      * <p>
      * For example:
-     *
+     * 
      * <pre>
      * Observable&lt;Object&gt; source = Observable.from(&quot;a&quot;, 1, &quot;c&quot;);
      * Observable&lt;String&gt; result = join(source, &quot;, &quot;);
      * </pre>
-     *
+     * 
      * will yield a single element equal to "a, 1, c".
-     *
+     * 
      * @param source
      *            the source sequence of CharSequence values
      * @param separator
@@ -486,22 +467,22 @@ public class StringObservable {
                 child.setProducer(new Producer() {
                     @Override
                     public void request(long n) {
-                        if (n > 0) {
-                            parent.requestAll();
-                        }
+                       if (n > 0) {
+                           parent.requestAll();
+                       }
                     }});
                 return parent;
             }
         });
     }
-
+    
     private static final class JoinParentSubscriber extends Subscriber<String> {
-
+        
         private final Subscriber<? super String> child;
         private final CharSequence separator;
         private boolean mayAddSeparator;
         private StringBuilder b = new StringBuilder();
-
+        
         JoinParentSubscriber(Subscriber<? super String> child, CharSequence separator) {
             this.child = child;
             this.separator = separator;
@@ -510,7 +491,7 @@ public class StringObservable {
         void requestAll() {
             request(Long.MAX_VALUE);
         }
-
+        
         @Override
         public void onStart() {
             request(0);
@@ -541,14 +522,14 @@ public class StringObservable {
             mayAddSeparator = true;
             b.append(t);
         }
-
+        
     }
 
     /**
      * Splits the {@link Observable} of Strings by lines and numbers them (zero based index)
      * <p>
      * <img width="640" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/St.byLine.png" alt="">
-     *
+     * 
      * @param source
      * @return the Observable conaining the split lines of the source
      */
@@ -561,7 +542,7 @@ public class StringObservable {
      * <p>
      * <img width="640" height="315" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/from.png" alt="">
      *
-     * @param source
+     * @param str
      *            the source String
      * @return an Observable that emits each char in the source String
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Creating-Observables#from">RxJava wiki: from</a>
