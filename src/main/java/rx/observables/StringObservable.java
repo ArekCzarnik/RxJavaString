@@ -38,8 +38,9 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringObservable {
@@ -225,16 +226,13 @@ public class StringObservable {
                                 bb.put(last);
                                 bb.put(next);
                                 bb.flip();
-                            }
-                            else { // next == null
+                            } else { // next == null
                                 bb = last;
                             }
-                        }
-                        else { // last == null
+                        } else { // last == null
                             if (next != null) {
                                 bb = ByteBuffer.wrap(next);
-                            }
-                            else { // next == null
+                            } else { // next == null
                                 return true;
                             }
                         }
@@ -246,8 +244,7 @@ public class StringObservable {
                         if (cr.isError()) {
                             try {
                                 cr.throwException();
-                            }
-                            catch (CharacterCodingException e) {
+                            } catch (CharacterCodingException e) {
                                 o.onError(e);
                                 return false;
                             }
@@ -255,8 +252,7 @@ public class StringObservable {
 
                         if (bb.remaining() > 0) {
                             leftOver = bb;
-                        }
-                        else {
+                        } else {
                             leftOver = null;
                         }
 
@@ -355,7 +351,42 @@ public class StringObservable {
         });
     }
 
- /**
+
+    public static Observable<Map> matcher(final Observable<String> src, final Pattern pattern, final String... names) {
+        return src.lift(new Operator<Map, String>() {
+            @Override
+            public Subscriber<? super String> call(final Subscriber<? super Map> subscriber) {
+
+                return new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        if (!subscriber.isUnsubscribed())
+                            subscriber.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(final Throwable e) {
+                        if (!subscriber.isUnsubscribed())
+                            subscriber.onError(e);
+                    }
+
+                    @Override
+                    public void onNext(final String segment) {
+                        final Matcher matcher = pattern.matcher(segment);
+                        while (!subscriber.isUnsubscribed() && matcher.find()) {
+                            Map matcherMap = new HashMap();
+                            for (String name : Arrays.asList(names)) {
+                               matcherMap.put(name,matcher.group(name));
+                            }
+                            subscriber.onNext(matcherMap);
+                        }
+                    }
+                };
+            }
+        });
+    }
+
+    /**
      * Rechunks the strings based on a regex pattern and works on infinite stream.
      *
      * <pre>
